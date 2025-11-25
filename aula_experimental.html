@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javis Game Academy | Aula Experimental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Teko:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff88; /* Verde Valorant/Neon */
+            --secondary: #6a0dad; /* Roxo Twitch */
+            --bg: #0a0a0a;
+            --panel: #161616;
+            --text: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(22, 22, 22, 0.9);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Teko', sans-serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .step-card {
+            background: var(--panel);
+            border: 1px solid #333;
+            width: 800px;
+            max-width: 90%;
+            padding: 40px;
+            border-radius: 10px;
+            position: relative;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+        }
+
+        .step-card.active {
+            display: block;
+            border-left: 5px solid var(--primary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .instruction-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 3px solid var(--secondary);
+            margin-bottom: 30px;
+        }
+
+        .instruction-box strong {
+            color: #fff;
+        }
+
+        /* Buttons */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 100% 80%, 90% 100%, 0 100%, 0 20%);
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-next:hover {
+            background: #fff;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .btn-prev {
+            background: transparent;
+            border: 1px solid #555;
+            color: #777;
+        }
+
+        .btn-prev:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Decor */
+        .bg-element {
+            position: absolute;
+            font-family: 'Teko';
+            font-size: 20rem;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">JAVIS <span>GAME ACADEMY</span></div>
+        <div class="progress-container">
+            <span>MISSION PROGRESS</span>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="bg-element" style="top: 10%; left: -5%;">MVP</div>
+        
+        <div class="step-card active" id="step0">
+            <h1>Bem-vindo ao Lobby</h1>
+            <h2>Sua missão: Criar um Card MVP Profissional</h2>
+            <p>Hoje você não é apenas um player. Você é o <strong>Designer da Org</strong>. Vamos criar uma arte de vitória insana usando técnicas reais do mercado de Esports.</p>
+            <div class="instruction-box">
+                <strong>Objetivo:</strong> Transformar imagens simples em um pôster de alto nível.<br>
+                <strong>Ferramenta:</strong> Photoshop (ou similar).<br>
+                <strong>Tempo:</strong> 40 minutos.
+            </div>
+            <div class="controls" style="justify-content: flex-end;">
+                <button class="btn btn-next" onclick="nextStep()">Start Game ></button>
+            </div>
+        </div>
+
+        <div class="step-card" id="step1">
+            <h1>Fase 1: O Loadout</h1>
+            <h2>Configurando o campo de batalha</h2>
+            <p>Abra o Photoshop e crie um novo arquivo. Precisamos do tamanho certo para o Instagram, onde a torcida vê o resultado.</p>
+            <div class="instruction-box">
+                1. Clique em <strong>Novo Arquivo</strong>.<br>
+                2. Tamanho: <strong>1080 largura</strong> x <strong>1350 altura</strong> (Pixels).<br>
+                3. Resolução: <strong>72</strong> ou <strong>300</strong>.<br>
+                4. Cor do fundo: <strong>Preto</strong> (#000000).
+            </div>
+            <div class="controls">
+                <button class="btn btn-prev" onclick="prevStep()">< Voltar</button>
+                <button class="btn btn-next" onclick="nextStep()">Próxima Fase ></button>
+            </div>
+        </div>
+
+        <div class="step-card" id="step2">
+            <h1>Fase 2: Map Control</h1>
+            <h2>Criando a ambientação</h2>
+            <p>Vamos colocar o mapa do jogo, mas ele não pode roubar a cena. Ele precisa ser "nerfado" para o personagem brilhar.</p>
+            <div class="instruction-box">
+                1. Arraste a imagem do <strong>Cenário/Mapa</strong> para dentro do arquivo.<br>
+                2. Aumente até cobrir tudo.<br>
+                3. Vá em <strong>Filtro > Desfoque > Desfoque Gaussiano</strong> (Defina em 5.0px).<br>
+                4. <strong>Dica Pro:</strong> Crie uma camada preta por cima e diminua a Opacidade para 70%. O fundo deve ficar bem escuro.
+            </div>
+            <div class="controls">
+                <button class="btn btn-prev" onclick="prevStep()">< Voltar</button>
+                <button class="btn btn-next" onclick="nextStep()">Próxima Fase ></button>
+            </div>
+        </div>
+
+        <div class="step-card" id="step3">
+            <h1>Fase 3: O Carry</h1>
+            <h2>Posicionando o Protagonista</h2>
+            <p>Agora entra a estrela. O personagem (Render) ou a foto do jogador deve impor respeito.</p>
+            <div class="instruction-box">
+                1. Arraste a imagem do <strong>Personagem (PNG sem fundo)</strong>.<br>
+                2. Aumente muito! Ele deve ocupar quase a tela toda.<br>
+                3. Centralize bem.<br>
+                4. Se a imagem estiver "apagada", vá em <strong>Imagem > Ajustes > Brilho/Contraste</strong> e aumente o contraste.
+            </div>
+            <div class="controls">
+                <button class="btn btn-prev" onclick="prevStep()">< Voltar</button>
+                <button class="btn btn-next" onclick="nextStep()">Próxima Fase ></button>
+            </div>
+        </div>
+
+        <div class="step-card" id="step4">
+            <h1>Fase 4: Efeito Neon (Buff)</h1>
+            <h2>A mágica do "Rim Light"</h2>
+            <p>Aqui separamos os amadores dos profissionais. Vamos fazer o personagem emitir luz.</p>
+            <div class="instruction-box">
+                1. Crie uma <strong>Nova Camada</strong> ATRÁS do personagem.<br>
+                2. Pegue o <strong>Pincel (Brush)</strong>. Escolha a cor do time (Verde Neon, Roxo, etc).<br>
+                3. Dê pinceladas nas bordas de trás do personagem.<br>
+                4. Mude o "Modo de Mesclagem" (onde está escrito 'Normal') para <strong>Divisão (Linear Dodge)</strong> ou <strong>Sobrepor</strong>.<br>
+                <span class="highlight">Veja como ele brilha!</span>
+            </div>
+            <div class="controls">
+                <button class="btn btn-prev" onclick="prevStep()">< Voltar</button>
+                <button class="btn btn-next" onclick="nextStep()">Próxima Fase ></button>
+            </div>
+        </div>
+
+        <div class="step-card" id="step5">
+            <h1>Fase 5: Tipografia</h1>
+            <h2>Identidade Visual Agressiva</h2>
+            <p>Esports pede fontes grossas, inclinadas e impactantes.</p>
+            <div class="instruction-box">
+                1. Escreva <strong>MVP</strong> ou <strong>VITÓRIA</strong> bem grande atrás do personagem.<br>
+                2. Escreva o <strong>NICK</strong> do jogador na frente, menor.<br>
+                3. Use uma fonte grossa (Ex: Impact, Rajdhani Bold).<br>
+                4. Use a ferramenta de inclinar (Itálico) para dar velocidade.
+            </div>
+            <div class="controls">
+                <button class="btn btn-prev" onclick="prevStep()">< Voltar</button>
+                <button class="btn btn-next" onclick="nextStep()">Próxima Fase ></button>
+            </div>
+        </div>
+
+        <div class="step-card" id="step6">
+            <h1>GG WP! (Good Game)</h1>
+            <h2>Missão Cumprida</h2>
+            <p>Você acabou de criar um asset de nível profissional. É isso que times, streamers e campeonatos compram todos os dias.</p>
+            <div class="instruction-box">
+                Salve sua imagem (JPG) e mande para seu celular. Veja como ficou na tela pequena!
+            </div>
+            <p style="color: var(--primary); font-weight: bold;">Na Javis Game Academy, isso é só o tutorial. O jogo real começa no curso completo.</p>
+            <div class="controls">
+                <button class="btn btn-prev" onclick="prevStep()">< Voltar</button>
+                <button class="btn btn-next" onclick="alert('Chame o instrutor para desbloquear a próxima fase!')">Falar com Instrutor</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let currentStep = 0;
+        const totalSteps = 6;
+
+        function updateUI() {
+            // Hide all steps
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Show current step
+            document.getElementById(`step${currentStep}`).classList.add('active');
+
+            // Update Progress Bar
+            const percentage = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
